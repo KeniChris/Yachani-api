@@ -10,6 +10,7 @@ import com.yachaniapi.notificacion.repository.NotificacionRepository;
 import com.yachaniapi.sesion.entity.SesionEstudio;
 import com.yachaniapi.usuario.entity.Usuario;
 import com.yachaniapi.usuario.service.UsuarioActualService;
+import com.yachaniapi.aviso.entity.Aviso;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -91,6 +92,23 @@ public class NotificacionService {
         }
         // El FK debe quedar libre antes de borrar o reemplazar la solicitud.
         notificacionRepository.saveAllAndFlush(notificaciones);
+    }
+    @Transactional
+    public void notificarAvisoPublicado(Aviso aviso) {
+        var grupo = aviso.getGrupo();
+        var destinatarios = new LinkedHashMap<Long, Usuario>();
+        grupo.getParticipantes().forEach(p -> destinatarios.putIfAbsent(p.getIdUsuario(), p));
+        destinatarios.remove(aviso.getAutor().getIdUsuario());
+
+        String mensaje = "Nuevo aviso en " + grupo.getNombre() + ": " + aviso.getTitulo();
+        for (Usuario destinatario : destinatarios.values()) {
+            Notificacion notificacion = new Notificacion();
+            notificacion.setDestinatario(destinatario);
+            notificacion.setGrupo(grupo);
+            notificacion.setTipo("AVISO_PUBLICADO");
+            notificacion.setMensaje(mensaje);
+            notificacionRepository.save(notificacion);
+        }
     }
 
     @Transactional

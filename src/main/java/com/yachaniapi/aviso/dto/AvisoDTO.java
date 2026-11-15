@@ -10,6 +10,7 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 public class AvisoDTO {
+    private static final String CAMPOS_INVALIDOS = "Llene correctamente los campos requeridos";
 
     @Getter
     @Setter
@@ -17,12 +18,12 @@ public class AvisoDTO {
     public static class CrearRequest {
         private Long idAutor;
 
-        @NotBlank(message = "El título es obligatorio")
-        @Size(max = 100, message = "El título no puede superar los 100 caracteres")
+        @NotBlank(message = CAMPOS_INVALIDOS)
+        @Size(max = 100, message = CAMPOS_INVALIDOS)
         private String titulo;
 
-        @NotBlank(message = "El mensaje es obligatorio")
-        @Size(max = 500, message = "El mensaje no puede superar los 500 caracteres")
+        @NotBlank(message = CAMPOS_INVALIDOS)
+        @Size(max = 500, message = CAMPOS_INVALIDOS)
         private String mensaje;
     }
 
@@ -32,12 +33,12 @@ public class AvisoDTO {
     public static class EditarRequest {
         private Long idAutor;
 
-        @NotBlank(message = "El título es obligatorio")
-        @Size(max = 100, message = "El título no puede superar los 100 caracteres")
+        @NotBlank(message = CAMPOS_INVALIDOS)
+        @Size(max = 100, message = CAMPOS_INVALIDOS)
         private String titulo;
 
-        @NotBlank(message = "El mensaje es obligatorio")
-        @Size(max = 500, message = "El mensaje no puede superar los 500 caracteres")
+        @NotBlank(message = CAMPOS_INVALIDOS)
+        @Size(max = 500, message = CAMPOS_INVALIDOS)
         private String mensaje;
     }
 
