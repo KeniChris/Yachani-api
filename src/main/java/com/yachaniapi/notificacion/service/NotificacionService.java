@@ -11,6 +11,8 @@ import com.yachaniapi.sesion.entity.SesionEstudio;
 import com.yachaniapi.usuario.entity.Usuario;
 import com.yachaniapi.usuario.service.UsuarioActualService;
 import com.yachaniapi.aviso.entity.Aviso;
+import com.yachaniapi.notificacion.evento.NotificacionCorreoEvento;
+import org.springframework.context.ApplicationEventPublisher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -25,7 +27,7 @@ public class NotificacionService {
     private final NotificacionRepository notificacionRepository;
     private final UsuarioActualService usuarioActual;
     private final NotificacionMapper notificacionMapper;
-
+    private final ApplicationEventPublisher eventos;
     @Transactional
     public void notificarSolicitudRecibida(SolicitudGrupo solicitud) {
         crearSolicitud(solicitud.getGrupo().getCreador(), solicitud, "SOLICITUD_RECIBIDA",
@@ -97,17 +99,19 @@ public class NotificacionService {
     public void notificarAvisoPublicado(Aviso aviso) {
         var grupo = aviso.getGrupo();
         var destinatarios = new LinkedHashMap<Long, Usuario>();
+
         grupo.getParticipantes().forEach(p -> destinatarios.putIfAbsent(p.getIdUsuario(), p));
         destinatarios.remove(aviso.getAutor().getIdUsuario());
 
         String mensaje = "Nuevo aviso en " + grupo.getNombre() + ": " + aviso.getTitulo();
+
         for (Usuario destinatario : destinatarios.values()) {
             Notificacion notificacion = new Notificacion();
             notificacion.setDestinatario(destinatario);
             notificacion.setGrupo(grupo);
             notificacion.setTipo("AVISO_PUBLICADO");
             notificacion.setMensaje(mensaje);
-            notificacionRepository.save(notificacion);
+            guardarNueva(notificacion);
         }
     }
 
@@ -129,7 +133,7 @@ public class NotificacionService {
             n.setSesion(sesion);
             n.setTipo(tipo);
             n.setMensaje(mensaje);
-            notificacionRepository.save(n);
+            guardarNueva(n);;
         }
     }
 
@@ -146,6 +150,17 @@ public class NotificacionService {
         n.setGrupo(solicitud.getGrupo());
         n.setTipo(tipo);
         n.setMensaje(mensaje);
-        notificacionRepository.save(n);
+        guardarNueva(n);;
+    }
+    private void guardarNueva(Notificacion notificacion) {
+        Notificacion guardada = notificacionRepository.save(notificacion);
+        NotificacionResponse respuesta = notificacionMapper.toNotificacionResponse(guardada);
+
+        eventos.publishEvent(new NotificacionCorreoEvento(
+                guardada.getIdNotificacion(),
+                guardada.getDestinatario().getCorreo(),
+                respuesta.titulo(),
+                respuesta.mensaje()
+        ));
     }
 }

@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.List;
 
@@ -22,13 +23,14 @@ import static org.mockito.Mockito.*;
 class NotificacionServiceTest {
     @Mock NotificacionRepository notificaciones;
     @Mock UsuarioActualService usuarioActual;
-    private NotificacionService service;
+    @Mock ApplicationEventPublisher eventos;
 
     @BeforeEach
     void preparar() {
-        service = new NotificacionService(notificaciones, usuarioActual, new NotificacionMapper());
+        service = new NotificacionService(
+                notificaciones, usuarioActual, new NotificacionMapper(), eventos);
     }
-
+    private NotificacionService service;
     @Test
     void desvincularConservaElContextoDeNotificacionesAntiguasYNoLasElimina() {
         var grupo = new GrupoEstudio();
