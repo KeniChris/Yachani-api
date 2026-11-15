@@ -64,3 +64,6 @@ app:
     destinatario: ${CONTACT_MAIL_TO:yachani.soporte@gmail.com}
   cors:
     allowed-origins: http://localhost:4200
+  notificaciones:
+    correo:
+      destinatario-prueba: ${NOTIFICACIONES_CORREO_DESTINATARIO_PRUEBA:}
