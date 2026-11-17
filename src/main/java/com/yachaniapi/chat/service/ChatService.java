@@ -12,7 +12,9 @@ import com.yachaniapi.grupoestudio.repository.GrupoEstudioRepository;
 import com.yachaniapi.usuario.entity.Usuario;
 import com.yachaniapi.usuario.exception.UsuarioNoEncontradoException;
 import com.yachaniapi.usuario.repository.UsuarioRepository;
+import com.yachaniapi.chat.evento.EventoChat;
 import jakarta.transaction.Transactional;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -30,6 +32,8 @@ public class ChatService {
     private final MensajeChatMapper mensajeChatMapper;
     private final com.yachaniapi.usuario.service.UsuarioActualService usuarioActual;
     private final com.yachaniapi.grupoestudio.service.AccesoGrupoService acceso;
+    // Avisa a ChatTiempoRealListener, que reenvía el cambio por WebSocket tras el commit.
+    private final ApplicationEventPublisher eventos;
 
     public ChatService(
             MensajeChatRepository mensajeChatRepository,
@@ -37,9 +41,11 @@ public class ChatService {
             UsuarioRepository usuarioRepository,
             MensajeChatMapper mensajeChatMapper,
             com.yachaniapi.usuario.service.UsuarioActualService usuarioActual,
-            com.yachaniapi.grupoestudio.service.AccesoGrupoService acceso) {
+            com.yachaniapi.grupoestudio.service.AccesoGrupoService acceso,
+            ApplicationEventPublisher eventos) {
         this.usuarioActual = usuarioActual;
         this.acceso = acceso;
+        this.eventos = eventos;
 
         this.mensajeChatRepository = mensajeChatRepository;
         this.grupoEstudioRepository = grupoEstudioRepository;
@@ -63,7 +69,9 @@ public class ChatService {
 
         MensajeChat mensajeGuardado = mensajeChatRepository.save(mensaje);
 
-        return mensajeChatMapper.toMensajeResponse(mensajeGuardado);
+        MensajeChatResponse respuesta = mensajeChatMapper.toMensajeResponse(mensajeGuardado);
+        eventos.publishEvent(EventoChat.creado(respuesta));
+        return respuesta;
     }
 
     @Transactional
@@ -101,6 +109,7 @@ public class ChatService {
         }
 
         mensajeChatRepository.delete(mensaje);
+        eventos.publishEvent(EventoChat.eliminado(idGrupo, idMensaje));
 
         return "Se eliminó correctamente";
     }

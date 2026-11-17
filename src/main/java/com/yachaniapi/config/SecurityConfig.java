@@ -28,6 +28,9 @@ public class SecurityConfig {
                                 "/auth/verificar-codigo", "/auth/restablecer-contrasena",
                                 "/contacto").permitAll()
                         .requestMatchers("/error").permitAll()
+                        // Handshake del WebSocket: el token se valida en el frame CONNECT
+                        // de STOMP (WebSocketAuthInterceptor), no en esta petición HTTP.
+                        .requestMatchers("/ws", "/ws/**").permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(errors -> errors
                         .authenticationEntryPoint((request, response, error) ->
