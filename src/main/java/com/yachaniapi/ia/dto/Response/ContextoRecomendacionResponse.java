@@ -1,5 +1,6 @@
-package com.yachaniapi.ia.dto;
+package com.yachaniapi.ia.dto.Response;
 
+import com.yachaniapi.ia.dto.Request.RecomendacionGruposRequest;
 import com.yachaniapi.usuario.dto.ConocimientoAcademicoResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

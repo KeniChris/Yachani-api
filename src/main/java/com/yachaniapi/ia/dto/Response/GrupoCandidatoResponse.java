@@ -1,4 +1,4 @@
-package com.yachaniapi.ia.dto;
+package com.yachaniapi.ia.dto.Response;
 
 import com.yachaniapi.grupoestudio.entity.TipoGrupo;
 import lombok.AllArgsConstructor;
