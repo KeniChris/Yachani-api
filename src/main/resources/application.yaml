@@ -1,6 +1,23 @@
 spring:
   application:
     name: Yachani
+  ai:
+    model:
+      chat: ${AI_CHAT_PROVIDER:none}
+      embedding: none
+      image: none
+      moderation: none
+      audio:
+        speech: none
+        transcription: none
+    openai:
+      api-key: ${AI_API_KEY:}
+      chat:
+        model: ${AI_MODEL:gpt-5.4-mini}
+        reasoning-effort: none
+        max-completion-tokens: 600
+        timeout: 25s
+        max-retries: 0
 
   # El WebSocket (chat en tiempo real) registra sus propios ejecutores de tareas y, sin
   # esto, Spring Boot deja de crear "applicationTaskExecutor", que usan los correos de

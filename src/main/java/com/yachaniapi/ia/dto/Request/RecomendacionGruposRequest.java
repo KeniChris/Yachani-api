@@ -1,4 +1,4 @@
-package com.yachaniapi.ia.dto;
+package com.yachaniapi.ia.dto.Request;
 
 import com.yachaniapi.grupoestudio.entity.TipoGrupo;
 import jakarta.validation.constraints.NotBlank;
