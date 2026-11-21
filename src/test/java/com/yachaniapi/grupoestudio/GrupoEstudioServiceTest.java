@@ -8,6 +8,8 @@ import com.yachaniapi.grupoestudio.mapper.GrupoEstudioMapper;
 import com.yachaniapi.grupoestudio.repository.*;
 import com.yachaniapi.grupoestudio.service.*;
 import com.yachaniapi.notificacion.service.NotificacionService;
+import com.yachaniapi.recursos.dto.request.TemaRequest;
+import com.yachaniapi.recursos.service.TemaGrupoService;
 import com.yachaniapi.usuario.entity.*;
 import com.yachaniapi.usuario.repository.UsuarioRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,6 +40,7 @@ class GrupoEstudioServiceTest {
     @Mock NotificacionService notificaciones;
     @Mock com.yachaniapi.usuario.service.UsuarioActualService usuarioActual;
     @Mock AccesoGrupoService acceso;
+    @Mock TemaGrupoService temas;
 
     private GrupoEstudioService service;
 
@@ -45,7 +48,8 @@ class GrupoEstudioServiceTest {
     void preparar() {
         service = new GrupoEstudioService(
                 grupos, solicitudes, usuarios, notificaciones,
-                Mappers.getMapper(GrupoEstudioMapper.class), new ReglasGrupoService(), usuarioActual, acceso
+                Mappers.getMapper(GrupoEstudioMapper.class), new ReglasGrupoService(),
+                usuarioActual, acceso, temas
         );
     }
 
@@ -70,6 +74,25 @@ class GrupoEstudioServiceTest {
         assertEquals("Ana Pérez", respuesta.nombreCreador());
         assertEquals("ESTUDIANTE", respuesta.tipoCreador());
         assertTrue(respuesta.permitirPublicaciones());
+        verifyNoInteractions(temas);
+    }
+
+    @Test
+    void creaLosTemasInicialesConElIdDelGrupoGuardado() {
+        when(grupos.bloquearCreador(1L)).thenReturn(Optional.of(1L));
+        when(usuarioActual.exigirPropio(1L)).thenReturn(estudiante(1L));
+        when(grupos.save(any(GrupoEstudio.class))).thenAnswer(invocacion -> {
+            GrupoEstudio grupo = invocacion.getArgument(0);
+            grupo.setIdGrupo(10L);
+            return grupo;
+        });
+
+        service.crearGrupo(new CrearGrupoRequest("Cálculo", "Ejercicios", "Práctico", 3, 1L,
+                List.of(" Derivadas ", "Derivadas", "Regla de la cadena")));
+
+        verify(temas).crear(10L, new TemaRequest("Derivadas", null));
+        verify(temas).crear(10L, new TemaRequest("Regla de la cadena", null));
+        verifyNoMoreInteractions(temas);
     }
 
     @Test
