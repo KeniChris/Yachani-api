@@ -9,7 +9,7 @@ spring:
       moderation: none
       audio:
         speech: none
-        transcription: none
+        transcription: ${AI_CHAT_PROVIDER:none}
     openai:
       api-key: ${AI_API_KEY:}
       chat:
@@ -18,6 +18,12 @@ spring:
         max-completion-tokens: 600
         timeout: 25s
         max-retries: 0
+      audio:
+        transcription:
+          model: ${AI_TRANSCRIPTION_MODEL:gpt-transcribe}
+          response-format: json
+          timeout: 45s
+          max-retries: 0
 
   # El WebSocket (chat en tiempo real) registra sus propios ejecutores de tareas y, sin
   # esto, Spring Boot deja de crear "applicationTaskExecutor", que usan los correos de

@@ -11,6 +11,8 @@ import com.yachaniapi.grupoestudio.mapper.GrupoEstudioMapper;
 import com.yachaniapi.grupoestudio.repository.GrupoEstudioRepository;
 import com.yachaniapi.grupoestudio.repository.SolicitudGrupoRepository;
 import com.yachaniapi.notificacion.service.NotificacionService;
+import com.yachaniapi.recursos.dto.request.TemaRequest;
+import com.yachaniapi.recursos.service.TemaGrupoService;
 import com.yachaniapi.usuario.entity.Estudiante;
 import com.yachaniapi.usuario.entity.Tutor;
 import com.yachaniapi.usuario.entity.Usuario;
@@ -55,6 +57,7 @@ public class GrupoEstudioService {
     private final ReglasGrupoService reglas;
     private final com.yachaniapi.usuario.service.UsuarioActualService usuarioActual;
     private final AccesoGrupoService acceso;
+    private final TemaGrupoService temas;
 
     @Transactional
     public GrupoResponse crearGrupo(CrearGrupoRequest request) {
@@ -87,7 +90,14 @@ public class GrupoEstudioService {
         if (usuario instanceof Estudiante estudiante) {
             grupo.getParticipantes().add(estudiante);
         }
-        return respuesta(grupoRepository.save(grupo), "Grupo creado correctamente");
+        GrupoEstudio guardado = grupoRepository.save(grupo);
+        if (request.temasIniciales() != null) {
+            request.temasIniciales().stream()
+                    .map(String::strip)
+                    .distinct()
+                    .forEach(nombre -> temas.crear(guardado.getIdGrupo(), new TemaRequest(nombre, null)));
+        }
+        return respuesta(guardado, "Grupo creado correctamente");
     }
 
     public PaginaResponse<GrupoResponse> listarGrupos(

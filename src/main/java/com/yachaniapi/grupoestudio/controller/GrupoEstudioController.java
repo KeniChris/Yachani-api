@@ -4,6 +4,7 @@ import com.yachaniapi.grupoestudio.dto.request.*;
 import com.yachaniapi.grupoestudio.dto.response.*;
 import com.yachaniapi.grupoestudio.entity.TipoGrupo;
 import com.yachaniapi.grupoestudio.service.GrupoEstudioService;
+import com.yachaniapi.recursos.exception.RecursosException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/grupos")
@@ -26,6 +28,11 @@ public class GrupoEstudioController {
     @PostMapping
     public ResponseEntity<GrupoResponse> crearGrupo(@Valid @RequestBody CrearGrupoRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.crearGrupo(request));
+    }
+
+    @ExceptionHandler(RecursosException.class)
+    public ResponseEntity<Map<String, String>> manejarErrorDeTemasIniciales(RecursosException error) {
+        return ResponseEntity.status(error.getEstado()).body(Map.of("mensaje", error.getMessage()));
     }
 
     // Sin idUsuario explora grupos; con idUsuario devuelve sus grupos.
