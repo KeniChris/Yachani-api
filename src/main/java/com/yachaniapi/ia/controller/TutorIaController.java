@@ -1,8 +1,11 @@
 package com.yachaniapi.ia.controller;
 
+import com.yachaniapi.ia.dto.Request.AsistenteGrupoRequest;
 import com.yachaniapi.ia.dto.Request.BorradorGrupoRequest;
+import com.yachaniapi.ia.dto.Response.AsistenteGrupoResponse;
 import com.yachaniapi.ia.dto.Response.BorradorGrupoResponse;
 import com.yachaniapi.ia.dto.Response.TranscripcionResponse;
+import com.yachaniapi.ia.service.AsistenteGrupoService;
 import com.yachaniapi.ia.service.BorradorGrupoService;
 import com.yachaniapi.ia.service.TranscripcionIaService;
 import jakarta.validation.Valid;
@@ -23,6 +26,13 @@ import org.springframework.web.multipart.MultipartFile;
 public class TutorIaController {
     private final BorradorGrupoService borradores;
     private final TranscripcionIaService transcripciones;
+    private final AsistenteGrupoService asistente;
+
+    // Chat del asistente IA en "Crear grupo": responde y propone cambios al formulario.
+    @PostMapping("/tutorias/asistente")
+    public AsistenteGrupoResponse conversar(@Valid @RequestBody AsistenteGrupoRequest request) {
+        return asistente.responder(request);
+    }
 
     @PostMapping("/tutorias/borrador")
     public BorradorGrupoResponse generarBorrador(@Valid @RequestBody BorradorGrupoRequest request) {
