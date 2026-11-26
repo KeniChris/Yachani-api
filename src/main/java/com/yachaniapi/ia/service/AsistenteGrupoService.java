@@ -32,6 +32,8 @@ public class AsistenteGrupoService {
             Si te falta información para ayudar (por ejemplo el curso, el tema o el objetivo del grupo), pídela en respuesta.
             Propón un campo solo si el tutor lo pidió, o si está vacío y tienes datos suficientes para llenarlo.
             Para cada campo que no quieras cambiar, devuelve una cadena vacía.
+            En nombre y descripcion escribe el texto final tal como quedará en el formulario, nunca una explicación del cambio.
+            Los comentarios sobre lo que cambiaste van solo en respuesta.
             nombre: hasta 100 caracteres. descripcion: hasta 500 caracteres.
             metodoEstudio: exactamente una de estas opciones: %s.
             capacidadMaxima: número de estudiantes en dígitos, como "20", mínimo 2, solo si el tutor lo indicó.
