@@ -1,5 +1,6 @@
 package com.yachaniapi.grupoestudio.dto.request;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 
 import java.util.List;
@@ -22,10 +23,18 @@ public record CrearGrupoRequest(
         @Size(max = 3, message = "Agrega hasta 3 temas iniciales")
         List<@NotBlank(message = "El nombre del tema es obligatorio")
              @Size(max = 100, message = "El nombre del tema admite hasta 100 caracteres")
-             String> temasIniciales
+             String> temasIniciales,
+        // Plan de sesiones aprobado al crear el grupo. Solo lo puede enviar un tutor.
+        @Size(max = 10, message = "Agrega hasta 10 sesiones iniciales")
+        List<@Valid SesionInicialRequest> sesionesIniciales
 ) {
     public CrearGrupoRequest(String nombre, String descripcion, String metodoEstudio,
                             Integer capacidadMaxima, Long idCreador) {
-        this(nombre, descripcion, metodoEstudio, capacidadMaxima, idCreador, List.of());
+        this(nombre, descripcion, metodoEstudio, capacidadMaxima, idCreador, List.of(), List.of());
+    }
+
+    public CrearGrupoRequest(String nombre, String descripcion, String metodoEstudio,
+                            Integer capacidadMaxima, Long idCreador, List<String> temasIniciales) {
+        this(nombre, descripcion, metodoEstudio, capacidadMaxima, idCreador, temasIniciales, List.of());
     }
 }

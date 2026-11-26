@@ -41,6 +41,7 @@ class GrupoEstudioServiceTest {
     @Mock com.yachaniapi.usuario.service.UsuarioActualService usuarioActual;
     @Mock AccesoGrupoService acceso;
     @Mock TemaGrupoService temas;
+    @Mock com.yachaniapi.sesion.service.SesionEstudioService sesiones;
 
     private GrupoEstudioService service;
 
@@ -49,7 +50,7 @@ class GrupoEstudioServiceTest {
         service = new GrupoEstudioService(
                 grupos, solicitudes, usuarios, notificaciones,
                 Mappers.getMapper(GrupoEstudioMapper.class), new ReglasGrupoService(),
-                usuarioActual, acceso, temas
+                usuarioActual, acceso, temas, sesiones
         );
     }
 
