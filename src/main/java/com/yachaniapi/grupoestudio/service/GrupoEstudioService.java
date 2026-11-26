@@ -13,6 +13,8 @@ import com.yachaniapi.grupoestudio.repository.SolicitudGrupoRepository;
 import com.yachaniapi.notificacion.service.NotificacionService;
 import com.yachaniapi.recursos.dto.request.TemaRequest;
 import com.yachaniapi.recursos.service.TemaGrupoService;
+import com.yachaniapi.sesion.dto.SesionRequest;
+import com.yachaniapi.sesion.service.SesionEstudioService;
 import com.yachaniapi.usuario.entity.Estudiante;
 import com.yachaniapi.usuario.entity.Tutor;
 import com.yachaniapi.usuario.entity.Usuario;
@@ -58,6 +60,7 @@ public class GrupoEstudioService {
     private final com.yachaniapi.usuario.service.UsuarioActualService usuarioActual;
     private final AccesoGrupoService acceso;
     private final TemaGrupoService temas;
+    private final SesionEstudioService sesiones;
 
     @Transactional
     public GrupoResponse crearGrupo(CrearGrupoRequest request) {
@@ -74,6 +77,10 @@ public class GrupoEstudioService {
             maximo = MAX_GRUPOS_ESTUDIANTE;
         } else {
             throw new IllegalArgumentException("Solo tutores o estudiantes pueden crear grupos");
+        }
+        boolean conSesiones = request.sesionesIniciales() != null && !request.sesionesIniciales().isEmpty();
+        if (conSesiones && tipo != TipoGrupo.TUTOR) {
+            throw new IllegalArgumentException("Solo un tutor puede programar sesiones al crear el grupo");
         }
         if (grupoRepository.countByCreador_IdUsuario(usuario.getIdUsuario()) >= maximo) {
             throw new ConflictoGrupoException("Alcanzaste el máximo de " + maximo + " grupos");
@@ -96,6 +103,11 @@ public class GrupoEstudioService {
                     .map(String::strip)
                     .distinct()
                     .forEach(nombre -> temas.crear(guardado.getIdGrupo(), new TemaRequest(nombre, null)));
+        }
+        // Misma transacción: si una sesión falla (p. ej. fecha pasada) no queda ni el grupo ni sus temas.
+        if (conSesiones) {
+            request.sesionesIniciales().forEach(inicial ->
+                    sesiones.crearSesion(guardado.getIdGrupo(), sesion(inicial, usuario.getIdUsuario())));
         }
         return respuesta(guardado, "Grupo creado correctamente");
     }
@@ -349,6 +361,17 @@ public class GrupoEstudioService {
                 reglas.publicacionesAbiertas(grupo), nombreCompleto(grupo.getCreador()),
                 reglas.tipoGrupo(grupo) == TipoGrupo.TUTOR ? "TUTOR" : "ESTUDIANTE", mensaje
         );
+    }
+
+    private static SesionRequest sesion(SesionInicialRequest inicial, Long idTutor) {
+        SesionRequest sesion = new SesionRequest();
+        sesion.setIdTutor(idTutor);
+        sesion.setTema(inicial.tema());
+        sesion.setDescripcion(inicial.descripcion());
+        sesion.setFechaHoraInicio(inicial.fechaHoraInicio());
+        sesion.setDuracionMinutos(inicial.duracionMinutos());
+        sesion.setLugar(inicial.lugar());
+        return sesion;
     }
 
     private void validarCapacidad(Integer capacidad) {
