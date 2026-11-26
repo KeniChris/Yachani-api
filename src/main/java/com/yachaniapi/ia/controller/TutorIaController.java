@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import com.yachaniapi.ia.dto.Request.AsistenteGrupoRequest;
+import com.yachaniapi.ia.dto.Response.AsistenteGrupoResponse;
+import com.yachaniapi.ia.service.AsistenteGrupoService;
 
 @RestController
 @RequestMapping("/ia")
@@ -23,10 +26,16 @@ import org.springframework.web.multipart.MultipartFile;
 public class TutorIaController {
     private final BorradorGrupoService borradores;
     private final TranscripcionIaService transcripciones;
+    private final AsistenteGrupoService asistente;
 
     @PostMapping("/tutorias/borrador")
     public BorradorGrupoResponse generarBorrador(@Valid @RequestBody BorradorGrupoRequest request) {
         return borradores.generar(request.instruccion());
+    }
+
+    @PostMapping("/tutorias/asistente")
+    public AsistenteGrupoResponse conversarConAsistente(@Valid @RequestBody AsistenteGrupoRequest request) {
+        return asistente.conversar(request);
     }
 
     @PostMapping(value = "/voz/transcribir", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
