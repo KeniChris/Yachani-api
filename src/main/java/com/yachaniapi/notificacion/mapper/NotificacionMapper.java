@@ -19,12 +19,14 @@ public class NotificacionMapper {
             case "SESION_RECORDATORIO" -> "Tu sesión empieza pronto";
             case "SESION_MODIFICADA" -> "La sesión fue modificada";
             case "SESION_CANCELADA" -> "La sesión fue cancelada";
+            case "AVISO_PUBLICADO" -> "Nuevo aviso del grupo";
             default -> "Notificación";
         };
         String ruta = "/notificaciones";
         if (idGrupo != null) {
             ruta = "/grupos/" + idGrupo;
             if ("SOLICITUD_RECIBIDA".equals(n.getTipo())) ruta += "/solicitudes";
+            if ("AVISO_PUBLICADO".equals(n.getTipo())) ruta += "/avisos";
             if (n.getSesion() != null) ruta += "/sesiones";
         }
         if ("SOLICITUD_RECHAZADA".equals(n.getTipo())) ruta = "/grupos/descubrimiento";

@@ -1,6 +1,36 @@
 spring:
   application:
     name: Yachani
+  ai:
+    model:
+      chat: ${AI_CHAT_PROVIDER:none}
+      embedding: none
+      image: none
+      moderation: none
+      audio:
+        speech: none
+        transcription: ${AI_CHAT_PROVIDER:none}
+    openai:
+      api-key: ${AI_API_KEY:}
+      chat:
+        model: ${AI_MODEL:gpt-5.4-mini}
+        reasoning-effort: none
+        max-completion-tokens: 600
+        timeout: 25s
+        max-retries: 0
+      audio:
+        transcription:
+          model: ${AI_TRANSCRIPTION_MODEL:gpt-transcribe}
+          response-format: json
+          timeout: 45s
+          max-retries: 0
+
+  # El WebSocket (chat en tiempo real) registra sus propios ejecutores de tareas y, sin
+  # esto, Spring Boot deja de crear "applicationTaskExecutor", que usan los correos de
+  # notificaciones (NotificacionCorreoListener).
+  task:
+    execution:
+      mode: force
 
   datasource:
     url: ${SUPABASE_DB_URL}
@@ -64,3 +94,6 @@ app:
     destinatario: ${CONTACT_MAIL_TO:yachani.soporte@gmail.com}
   cors:
     allowed-origins: http://localhost:4200
+  notificaciones:
+    correo:
+      destinatario-prueba: ${NOTIFICACIONES_CORREO_DESTINATARIO_PRUEBA:}

@@ -80,4 +80,24 @@ public class CorreoService {
             );
         }
     }
+    public void enviarNotificacion(String correoDestino, String titulo, String texto) {
+        if (correoRemitente == null || correoRemitente.isBlank()) {
+            throw new EnvioCorreoException("El remitente SMTP no está configurado.");
+        }
+
+        SimpleMailMessage mensaje = new SimpleMailMessage();
+        mensaje.setFrom(correoRemitente);
+        mensaje.setTo(correoDestino);
+        mensaje.setSubject("[Yachani] " + titulo);
+        mensaje.setText("Hola,\n\n"
+                + texto
+                + "\n\nAbre Yachani y entra a Notificaciones para ver el detalle."
+                + "\n\nEquipo Yachani");
+
+        try {
+            mailSender.send(mensaje);
+        } catch (MailException exception) {
+            throw new EnvioCorreoException("No fue posible enviar la notificación por SMTP.");
+        }
+    }
 }
