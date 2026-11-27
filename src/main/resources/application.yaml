@@ -94,7 +94,7 @@ app:
   contacto:
     destinatario: ${CONTACT_MAIL_TO:yachani.soporte@gmail.com}
   cors:
-    allowed-origins: "${CORS_ORIGINS:http://localhost:4200}"
+    allowed-origins: "${CORS_ORIGINS:http:https://yachani-frontend.netlify.app}"
   notificaciones:
     correo:
       destinatario-prueba: ${NOTIFICACIONES_CORREO_DESTINATARIO_PRUEBA:}
