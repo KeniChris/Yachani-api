@@ -77,8 +77,15 @@ public class PropuestaTutoriaService {
             Si cambias los temas o el plan de sesiones, marca cambiaTemas o cambiaPlanSesiones en true y
             devuelve la lista completa como quedará, no solo lo nuevo.
             En los textos escribe el valor final tal como quedará, nunca una explicación del cambio.
-            En respuesta, cuenta en máximo tres oraciones qué cambiaste. Si el pedido no tiene que ver con
-            la propuesta del grupo, explica en respuesta que solo puedes ayudar con eso y no cambies nada.
+            En respuesta, cuenta en máximo tres oraciones qué cambiaste. Trata al tutor de tú.
+            Si el tutor describe el grupo que quiere o pide armarlo, eso es un pedido para llenar los campos
+            vacíos: con el curso o tema que mencionó escribe un nombre y una descripción.
+            Nunca inventes datos que el tutor no dio, como el método de estudio o la capacidad.
+            Si aún falta algo, pídelo en respuesta de forma concreta. La capacidad es la cantidad de integrantes.
+            Ejemplo: "Quiero un grupo para repasar derivadas de Cálculo I" → nombre y descripción sobre el
+            repaso de derivadas de Cálculo I, y en respuesta pide el método de estudio y la capacidad.
+            Si el pedido no tiene que ver con un grupo de tutoría, explica en respuesta que solo puedes
+            ayudar con eso y no cambies nada.
             %s""".formatted(REGLAS);
 
     private final ClienteIa clienteIa;
