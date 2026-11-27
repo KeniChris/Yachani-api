@@ -39,7 +39,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: ${DB_DDL_AUTO:update}
     show-sql: true
     properties:
       hibernate:
@@ -82,6 +82,7 @@ recursos:
   extensiones: pdf,docx,pptx,xlsx,png,jpg,jpeg
 
 server:
+  port: ${PORT:8080}
   servlet:
     context-path: /api
 
@@ -93,7 +94,7 @@ app:
   contacto:
     destinatario: ${CONTACT_MAIL_TO:yachani.soporte@gmail.com}
   cors:
-    allowed-origins: http://localhost:4200
+    allowed-origins: "${CORS_ORIGINS:http://localhost:4200}"
   notificaciones:
     correo:
       destinatario-prueba: ${NOTIFICACIONES_CORREO_DESTINATARIO_PRUEBA:}

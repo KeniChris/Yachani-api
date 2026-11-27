@@ -31,6 +31,7 @@ public class SecurityConfig {
                         // Handshake del WebSocket: el token se valida en el frame CONNECT
                         // de STOMP (WebSocketAuthInterceptor), no en esta petición HTTP.
                         .requestMatchers("/ws", "/ws/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/health").permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(errors -> errors
                         .authenticationEntryPoint((request, response, error) ->
